@@ -1,0 +1,122 @@
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Click it!</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <style>
+		#image_button{
+			width: 100px;
+			height: 100px;
+		}
+	</style>
+	
+    <body >
+		
+		<div class="w3-display-container w3-light-blue w3-round-large w3-margin" style="height: 120px">
+
+			<div class="w3-display-left" style="margin-left: 150px">
+				<div class="stl"><h1>Catch the square</h1></div>
+			</div>
+			<span class="w3-display-middle">
+				<button id="button_start" class="btn_style" onclick="startGame()">Try it</button>
+				<button id="button_stop" class="btn_style" onclick="stopGame()">Stop</button>
+				<!-- <href id="stop" class="btn_style" onclick="start_game()">Stop</div> -->
+			</span>
+			<div class="w3-display-topright" >
+				<div class="stl" style="margin-right: 100px"><p id="score"></p></div>
+			</div>
+
+		</div>
+         
+		<div id="game_bg" class="w3-display-container w3-pale-blue w3-round-large w3-padding w3-margin" style="height: 500px">
+			<img id="image_button" src=""/>
+		</div>
+
+    </body>
+  
+	<script> 
+		const IMG_BTN_1 = "blue.png";
+		const IMG_BTN_2 = "red.jpg";
+		const MIN_TIME_INTERVAL = 400;
+		const MAX_TIME_INTERVAL = 1200;
+		const img = $("#image_button");
+		const score = $("#score");
+
+		const window_width = $(window).width();
+		const window_heigth = $(window).height();
+		const top_game_display = $("#game_bg").offset().top;
+		
+		var user_score = 0;
+		var max_score = 0;
+		var button_state = true;
+		var game_status = false;
+
+		img.hide();
+		score.prop("disabled", true);
+		$("#game_bg").height(window_heigth - top_game_display - 20);
+
+    	function startGame() {
+    		$("#button_start").prop("disabled", true);
+    		$("#button_stop").prop("disabled", true);
+
+    		setTimeout(() => {
+    			$("#button_stop").prop("disabled", false);
+    		}, 3000);
+
+    		game_status = true
+
+    		img.attr("src", IMG_BTN_1);
+    		img.show();
+    		img.click(() => {
+    			if (button_state) {
+    				img.attr("src", IMG_BTN_2);
+    				user_score++;
+    				button_state = false;
+    				score.text(" Score: " + user_score);
+    			} 
+    		})
+
+    		drawImage();
+    	}
+
+    	function getRandomInt(min, max){
+		  	return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		function drawImage(){
+			if (!game_status) {
+				$("#image_button").hide();
+				return;
+			}
+
+			max_score++;
+
+			if(!button_state){
+				img.attr("src", IMG_BTN_1);
+				button_state = true;
+    		}
+
+			img.offset({
+				top: getRandomInt(top_game_display + 10, window_heigth - 120), 
+				left: getRandomInt(20, window_width - 120)});
+
+			setTimeout(drawImage, getRandomInt( MIN_TIME_INTERVAL, MAX_TIME_INTERVAL))
+		}
+
+		function stopGame() {
+			if (!game_status) return;
+			game_status = false;
+			alert("You caught: " + Math.ceil(100 * user_score / max_score) + "%");
+			user_score = 0;
+			max_score = 0;
+			$("#button_start").prop("disabled", false);
+			score.text("");
+		}
+	    
+  	</script>
+
+</html>
